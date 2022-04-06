@@ -64,7 +64,7 @@ blsstring <- paste(blsstring,']',sep="")
 blsjson <- noquote(blsstring)
 write_json(blsstring, "08_bls.json")
 
-
+#Functions for moving through the data
 apiDF <- function(data){
   df <- data.frame(year=character(),
                    period=character(),
