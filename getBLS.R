@@ -17,12 +17,12 @@ for (county in countycodes){
     'seriesid'=c(county),
     'latest'='true', 
     'annualaverage'='true',
-    'registrationkey'='keyhere')
+    'registrationkey'='') #have to add this with your own
   response <- blsAPI(payload)
   latestjson <- fromJSON(response)
   
   #latest <- latestDF(json$Results$series[[1]]$data)
-  latest <- latestDF(latestjson[["Results"]][["series"]][["data"]])
+  latest <- latestDF2(latestjson[["Results"]][["series"]][["data"]])
   latestrate <- latest[1,5]
   
   for (sy in startyears){
@@ -30,9 +30,9 @@ for (county in countycodes){
     payload <- list(
       'seriesid'=c(county),
       'startyear'=sy,
-      'endyear'='2022', 
+      'endyear'='2023', 
       'annualaverage'='true',
-      'registrationkey'='keyhere')
+      'registrationkey'='') #have to add this with your own
     response <- blsAPI(payload)
     json <- fromJSON(response)
     testdf <- as.data.frame(json[["Results"]][["series"]][["data"]])
@@ -64,7 +64,7 @@ blsstring <- paste(blsstring,']',sep="")
 blsjson <- noquote(blsstring)
 write_json(blsstring, "08_bls.json")
 
-#Functions for moving through the data
+
 apiDF <- function(data){
   df <- data.frame(year=character(),
                    period=character(),
@@ -114,3 +114,22 @@ latestDF <- function(data){
   }
   return(df)
 }
+
+latestDF2 <- function(data){
+  df <- data.frame(year=character(),
+                   period=character(),
+                   periodName=character(),
+                   latest=character(),
+                   value=character(),
+                   footnotes=character(),
+                   footnotes2=character(),
+                   stringsAsFactors=FALSE)
+  
+  i <- 0
+  for(d in data){
+    i <- i + 1
+    df[i,] <- unlist(d)
+  }
+  return(df)
+}
+
